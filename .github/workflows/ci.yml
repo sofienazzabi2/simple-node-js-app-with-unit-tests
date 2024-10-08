@@ -55,3 +55,6 @@ jobs:
           DB_PASSWORD: ""
           DB_NAME: user_db
         run: npm test
+
+      - name: Terminate Successfully
+        run: echo "All tests completed successfully!"
