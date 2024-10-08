@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main 
+      - main
   pull_request:
     branches:
       - main
@@ -12,6 +12,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_DATABASE: user_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Vérifier le code
         uses: actions/checkout@v2
@@ -19,10 +33,25 @@ jobs:
       - name: Installer Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "22.3.0" 
+          node-version: "22.3.0"
 
       - name: Installer les dépendances
         run: npm install
 
+      - name: Attendre que MySQL soit prêt
+        run: |
+          while ! mysqladmin ping -h 127.0.0.1 --silent; do
+            sleep 1
+          done
+
+      - name: Créer la table 'users'
+        run: |
+          mysql -h 127.0.0.1 -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < init.sql
+
       - name: Exécuter les tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: ""
+          DB_NAME: user_db
         run: npm test
