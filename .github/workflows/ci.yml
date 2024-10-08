@@ -46,8 +46,8 @@ jobs:
 
       - name: Créer la table 'users'
         run: |
-          mysql -h 127.0.0.1 -uroot --password="" $MYSQL_DATABASE < init.sql
-
+          mysql -h 127.0.0.1 -uroot --password="" user_db < init.sql
+ 
       - name: Exécuter les tests
         env:
           DB_HOST: 127.0.0.1
