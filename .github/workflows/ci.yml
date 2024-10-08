@@ -48,13 +48,15 @@ jobs:
         run: |
           mysql -h 127.0.0.1 -uroot --password="" user_db < init.sql
 
-      - name: Install Trivy
+      - name: Download and install the latest version of Trivy
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.35.0/trivy_0.35.0_Linux-64bit.deb
-          sudo dpkg -i trivy_0.35.0_Linux-64bit.deb
-          trivy -v  # Verify installation
+          LATEST_VERSION=$(wget -qO- https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+          wget https://github.com/aquasecurity/trivy/releases/download/${LATEST_VERSION}/trivy_${LATEST_VERSION#v}_Linux-64bit.deb
+          sudo dpkg -i trivy_${LATEST_VERSION#v}_Linux-64bit.deb
+          trivy -v
+
 
       - name: Run tests
         env:
