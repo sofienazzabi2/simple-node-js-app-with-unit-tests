@@ -1,9 +1,11 @@
 import express from "express";
 import { createConnection } from "mysql2";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
 
 const app = express();
 const port = 4000;
+dotenv.config();
 
 // Middleware for parsing JSON data
 app.use(bodyParser.json());
