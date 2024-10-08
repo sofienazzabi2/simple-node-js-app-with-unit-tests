@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 
 // MySQL connection setup
 const db = createConnection({
-  host: "localhost",
-  user: "root",
-  password: "", // Add your MySQL root password here
-  database: "user_db",
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "user_db",
 });
 
 // Connect to MySQL
