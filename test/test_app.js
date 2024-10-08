@@ -1,16 +1,12 @@
 import request from "supertest";
-import app, { server } from "../app.js"; // Import server for closing it
+import app, { server, closeServer } from "../app.js"; // Import closeServer function
 import { expect } from "chai";
 
 describe("User Management API", () => {
   let userId;
 
-  after((done) => {
-    // Close the Express server after all tests
-    server.close(() => {
-      console.log("Server closed.");
-      done(); // Signal completion of the after hook
-    });
+  after(async () => {
+    await closeServer(); // Ensure the server is closed after tests
   });
 
   it("should create a new user", async () => {
