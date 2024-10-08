@@ -60,6 +60,7 @@ const server = app.listen(port, () => {
 // Function to close the server
 const closeServer = () => {
   return new Promise((resolve) => {
+    console.log("Attempting to close server...");
     server.close((err) => {
       if (err) {
         console.error("Error closing server:", err);
@@ -68,6 +69,10 @@ const closeServer = () => {
       }
       resolve();
     });
+  }).then(() => {
+    // Exit the process after the server has closed
+    console.log("Exiting process...");
+    process.exit(0);
   });
 };
 
