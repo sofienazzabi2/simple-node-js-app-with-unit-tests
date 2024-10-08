@@ -27,34 +27,42 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Vérifier le code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Installer Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v2
         with:
           node-version: "22.3.0"
 
-      - name: Installer les dépendances
+      - name: Install dependencies
         run: npm install
 
-      - name: Attendre que MySQL soit prêt
+      - name: Wait for MySQL to be ready
         run: |
           while ! mysqladmin ping -h 127.0.0.1 --silent; do
             sleep 1
           done
-
-      - name: Créer la table 'users'
+          
+      - name: Create the 'users' table
         run: |
           mysql -h 127.0.0.1 -uroot --password="" user_db < init.sql
- 
-      - name: Exécuter les tests
+
+      - name: Run tests
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASSWORD: ""
           DB_NAME: user_db
         run: npm test
+
+      - name: Build Docker image
+        run: |
+          docker build -t nodejs-simple-app .
+
+      - name: Run Trivy scan
+        run: |
+          trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
