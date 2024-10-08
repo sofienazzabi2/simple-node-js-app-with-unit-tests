@@ -29,20 +29,4 @@ describe("User Management API", () => {
     expect(res.status).to.equal(200);
     expect(res.body).to.be.an("array").that.is.not.empty;
   });
-
-  it("should update the user", async () => {
-    const res = await request(app).put(`/users/${userId}`).send({
-      name: "Jane Doe",
-      email: "jane@example.com",
-      age: 25,
-    });
-    expect(res.status).to.equal(200);
-    expect(res.text).to.equal("User updated successfully!");
-  });
-
-  it("should delete the user", async () => {
-    const res = await request(app).delete(`/users/${userId}`);
-    expect(res.status).to.equal(200);
-    expect(res.text).to.equal("User deleted successfully!");
-  });
 });

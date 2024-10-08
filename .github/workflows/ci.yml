@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true" 
           MYSQL_DATABASE: user_db
         ports:
           - 3306:3306
@@ -46,8 +46,8 @@ jobs:
 
       - name: Créer la table 'users'
         run: |
-          mysql -h 127.0.0.1 -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < init.sql
-
+          mysql -h 127.0.0.1 -uroot --password="" user_db < init.sql
+ 
       - name: Exécuter les tests
         env:
           DB_HOST: 127.0.0.1
