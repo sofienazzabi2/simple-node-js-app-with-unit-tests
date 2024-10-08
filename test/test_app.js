@@ -2,18 +2,36 @@ import request from "supertest";
 import app from "../app.js";
 import { expect } from "chai";
 
+// User Management API Tests
 describe("User Management API", () => {
   let userId;
 
-  it("should create a new user", async () => {
+  // Setup and Cleanup
+  beforeEach(async () => {
+    // Insert a new user before each test
     const res = await request(app).post("/users").send({
       name: "John Doe",
       email: "john@example.com",
       age: 30,
     });
+    userId = res.body.id; // Save user ID for further tests
+  });
+
+  afterEach(async () => {
+    // Clean up - delete the user after each test
+    await request(app).delete(`/users/${userId}`);
+  });
+
+  // Test cases
+  it("should create a new user", async () => {
+    const res = await request(app).post("/users").send({
+      name: "Alice Smith",
+      email: "alice@example.com",
+      age: 28,
+    });
     expect(res.status).to.equal(200);
     expect(res.text).to.equal("User added successfully!");
-    userId = res.body.id; // Store user ID for further tests
+    expect(res.body.id).to.exist;
   });
 
   it("should retrieve all users", async () => {
