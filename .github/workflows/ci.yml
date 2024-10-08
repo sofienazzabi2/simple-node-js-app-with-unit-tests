@@ -19,7 +19,7 @@ jobs:
       - name: Installer Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14"
+          node-version: "22.3.0" 
 
       - name: Installer les dépendances
         run: npm install
