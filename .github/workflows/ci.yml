@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main # Changez ceci si vous utilisez une autre branche principale
+      - main 
   pull_request:
     branches:
       - main
@@ -19,7 +19,7 @@ jobs:
       - name: Installer Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14" # Changez la version si nécessaire
+          node-version: "22.3.0" 
 
       - name: Installer les dépendances
         run: npm install
