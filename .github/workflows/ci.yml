@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_ROOT_PASSWORD: "test"
           MYSQL_DATABASE: user_db
         ports:
           - 3306:3306
@@ -52,6 +52,6 @@ jobs:
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
-          DB_PASSWORD: ""
+          DB_PASSWORD: "test"
           DB_NAME: user_db
         run: npm test
