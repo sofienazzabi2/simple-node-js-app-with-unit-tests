@@ -30,6 +30,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
@@ -80,7 +85,6 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} 
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} 
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }} 
             -Dsonar.sources=.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
