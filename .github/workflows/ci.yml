@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: "true" 
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
           MYSQL_DATABASE: user_db
         ports:
           - 3306:3306
@@ -57,7 +57,6 @@ jobs:
           sudo dpkg -i trivy_${LATEST_VERSION#v}_Linux-64bit.deb
           trivy -v
 
-
       - name: Run tests
         env:
           DB_HOST: 127.0.0.1
@@ -73,6 +72,15 @@ jobs:
       - name: Run Trivy scan
         run: |
           trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v1
+        with:
+          sonar-projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
+          sonar-org: ${{ secrets.SONAR_ORGANIZATION }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
