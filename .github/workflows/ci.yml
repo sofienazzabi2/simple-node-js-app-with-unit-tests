@@ -82,6 +82,9 @@ jobs:
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} 
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} 
             -Dsonar.sources=.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Set SONAR_TOKEN as an environment variable
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
