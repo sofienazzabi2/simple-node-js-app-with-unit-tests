@@ -29,17 +29,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Ensures that SonarCloud gets the full history for accurate scanning
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'temurin'  # Specify the Java distribution
 
       - name: Check Java Version
-        run: java -version  # Check the Java version to ensure it's Java 17
+        run: java -version  # Check the Java version
 
       - name: Install Node.js
         uses: actions/setup-node@v2
@@ -47,7 +45,7 @@ jobs:
           node-version: "22.3.0"
 
       - name: Install dependencies
-        run: yarn  # Using yarn instead of npm as in the working pipeline
+        run: npm install
 
       - name: Wait for MySQL to be ready
         run: |
@@ -74,7 +72,7 @@ jobs:
           DB_USER: root
           DB_PASSWORD: ""
           DB_NAME: user_db
-        run: yarn test --coverage  # Running tests with coverage as seen in the second pipeline
+        run: npm test
 
       - name: Build Docker image
         run: |
@@ -84,17 +82,17 @@ jobs:
         run: |
           trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
 
-      # SonarCloud analysis step (from working pipeline)
+      # SonarCloud analysis step
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}    # Set SONAR_TOKEN as an environment variable
         with:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} 
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} 
             -Dsonar.sources=.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Set SONAR_TOKEN as an environment variable
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
