@@ -76,8 +76,14 @@ jobs:
       # SonarCloud analysis step
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master  # Follow the latest SonarCloud recommendation
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} 
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} 
+            -Dsonar.sources=.
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Using the SonarCloud token from secrets
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Set SONAR_TOKEN as an environment variable
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
