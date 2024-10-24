@@ -28,16 +28,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'temurin'  # Specify the Java distribution
-
-      - name: Check Java Version
-        run: java -version  # Check the Java version
+        uses: actions/checkout@v3  # Updated to v3
 
       - name: Install Node.js
         uses: actions/setup-node@v2
@@ -52,7 +43,7 @@ jobs:
           while ! mysqladmin ping -h 127.0.0.1 --silent; do
             sleep 1
           done
-          
+
       - name: Create the 'users' table
         run: |
           mysql -h 127.0.0.1 -uroot --password="" user_db < init.sql
@@ -84,15 +75,9 @@ jobs:
 
       # SonarCloud analysis step
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1
-        with:
-          args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} 
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} 
-            -Dsonar.sources=.
+        uses: SonarSource/sonarcloud-github-action@master  # Follow the latest SonarCloud recommendation
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Set SONAR_TOKEN as an environment variable
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Using the SonarCloud token from secrets
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
