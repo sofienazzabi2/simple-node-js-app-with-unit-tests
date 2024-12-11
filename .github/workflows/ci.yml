@@ -95,12 +95,11 @@ jobs:
 
       - name: Tag Docker image with auto-increment version
         run: |
-          IMAGE_VERSION="${GITHUB_RUN_NUMBER}"
-          docker tag sofienazzabi/nodejs-app:${GITHUB_RUN_NUMBER} sofienazzabi/nodejs-app:${IMAGE_VERSION}
+          docker tag sofienazzabi/simple-nodejs-app-with-unit-test:latest sofienazzabi/simple-nodejs-app-with-unit-test:latest
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push sofienazzabi/simple-nodejs-app-with-unit-test:${GITHUB_RUN_NUMBER}
+          docker push sofienazzabi/simple-nodejs-app-with-unit-test:latest
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
