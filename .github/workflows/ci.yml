@@ -65,14 +65,6 @@ jobs:
           DB_NAME: user_db
         run: npm test
 
-      - name: Build Docker image
-        run: |
-          docker build -t nodejs-simple-app .
-
-      - name: Run Trivy scan
-        run: |
-          trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
-
       # SonarCloud analysis step
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master  # Follow the latest SonarCloud recommendation
@@ -84,6 +76,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Set SONAR_TOKEN as an environment variable
+
+          
+      - name: Build Docker image
+        run: |
+          docker build -t nodejs-simple-app .
+
+      - name: Run Trivy scan
+        run: |
+          trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
+
+      - name: Log in to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+      - name: Tag Docker image with auto-increment version
+        run: |
+          IMAGE_VERSION="${GITHUB_RUN_NUMBER}"
+          docker tag sofienazzabi/nodejs-app:${GITHUB_RUN_NUMBER} sofienazzabi/nodejs-app:${IMAGE_VERSION}
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push sofienazzabi/simple-nodejs-app-with-unit-test:${GITHUB_RUN_NUMBER}
 
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
