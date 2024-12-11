@@ -77,17 +77,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for SonarCloud to comment on PRs
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Set SONAR_TOKEN as an environment variable
 
-          
-      - name: Build Docker image
-        run: |
-          docker build -t nodejs-simple-app .
-          
       - name: Build Docker image
         run: |
           docker build -t sofienazzabi/simple-nodejs-app-with-unit-test:latest .
-            - name: Run Trivy scan
-              run: |
-                trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
+          
+      - name: Run Trivy scan
+        run: |
+          trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
 
       - name: Log in to Docker Hub
         env:
