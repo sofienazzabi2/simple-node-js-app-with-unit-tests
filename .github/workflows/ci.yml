@@ -25,7 +25,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3  # Updated to v3
@@ -43,11 +42,9 @@ jobs:
           while ! mysqladmin ping -h 127.0.0.1 --silent; do
             sleep 1
           done
-
       - name: Create the 'users' table
         run: |
           mysql -h 127.0.0.1 -uroot --password="" user_db < init.sql
-
       - name: Download and install the latest version of Trivy
         run: |
           sudo apt-get update
@@ -56,7 +53,6 @@ jobs:
           wget https://github.com/aquasecurity/trivy/releases/download/${LATEST_VERSION}/trivy_${LATEST_VERSION#v}_Linux-64bit.deb
           sudo dpkg -i trivy_${LATEST_VERSION#v}_Linux-64bit.deb
           trivy -v
-
       - name: Run tests
         env:
           DB_HOST: 127.0.0.1
@@ -84,21 +80,17 @@ jobs:
       - name: Run Trivy scan
         run: |
           trivy image --exit-code 1 --severity CRITICAL,HIGH nodejs-simple-app || echo "Trivy scan completed with warnings."
-
       - name: Log in to Docker Hub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-
       - name: Tag Docker image with auto-increment version
         run: |
           docker tag sofienazzabi/simple-nodejs-app-with-unit-test:latest sofienazzabi/simple-nodejs-app-with-unit-test:latest
-
       - name: Push Docker image to Docker Hub
         run: |
           docker push sofienazzabi/simple-nodejs-app-with-unit-test:latest
-
       - name: Terminate Successfully
         run: echo "All tests completed successfully!"
